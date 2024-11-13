@@ -27,7 +27,8 @@
 	
 	<modules>
  
-    </modules>
+    <module>order-service</module>
+	</modules>
 
     <dependencyManagement>
         <dependencies>
