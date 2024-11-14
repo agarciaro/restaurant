@@ -16,21 +16,19 @@ import com.food.ordering.system.order.service.domain.valueobject.StreetAddress;
 import com.food.ordering.system.order.service.domain.valueobject.TrackingId;
 
 public class Order extends AggregateRoot<OrderId> {
+    private final CustomerId customerId;
+    private final RestaurantId restaurantId;
+    private final StreetAddress deliveryAddress;
+    private final Money price;
+    private final List<OrderItem> items;
 
-	private final CustomerId customerId;
-	private final RestaurantId restaurantId;
-	private final StreetAddress deliveryAddress;
-	private final Money price;
-	private final List<OrderItem> items;
+    private TrackingId trackingId;
+    private OrderStatus orderStatus;
+    private List<String> failureMessages;
 
-	private TrackingId trackingId;
-	private OrderStatus orderStatus;
-	private List<String> failureMessages;
+    public static final String FAILURE_MESSAGE_DELIMITER = ",";
 
-	public static final String FAILURE_MESSAGE_DELIMITER = ",";
-	
-	
-	public void initializeOrder() {
+    public void initializeOrder() {
         setId(new OrderId(UUID.randomUUID()));
         trackingId = new TrackingId(UUID.randomUUID());
         orderStatus = OrderStatus.PENDING;
@@ -72,7 +70,7 @@ public class Order extends AggregateRoot<OrderId> {
         orderStatus = OrderStatus.CANCELLED;
         updateFailureMessages(failureMessages);
     }
-    
+
     private void updateFailureMessages(List<String> failureMessages) {
         if (this.failureMessages != null && failureMessages != null) {
             this.failureMessages.addAll(failureMessages.stream().filter(message -> !message.isEmpty()).collect(Collectors.toList()));
@@ -231,5 +229,4 @@ public class Order extends AggregateRoot<OrderId> {
             return new Order(this);
         }
     }
-	
 }

@@ -96,4 +96,3 @@ public class OrderItem extends BaseEntity<OrderItemId> {
         }
     }
 }
-

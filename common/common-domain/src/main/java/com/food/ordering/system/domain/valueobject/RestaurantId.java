@@ -7,4 +7,3 @@ public class RestaurantId extends BaseId<UUID> {
         super(value);
     }
 }
-
