@@ -1,15 +1,5 @@
 package com.food.ordering.system.order.service.domain;
 
-import static com.food.ordering.system.domain.DomainConstants.UTC;
-
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.food.ordering.system.domain.valueobject.OrderId;
 import com.food.ordering.system.domain.valueobject.OrderStatus;
 import com.food.ordering.system.domain.valueobject.PaymentStatus;
@@ -27,8 +17,16 @@ import com.food.ordering.system.order.service.domain.ports.output.repository.Ord
 import com.food.ordering.system.outbox.OutboxStatus;
 import com.food.ordering.system.saga.SagaStatus;
 import com.food.ordering.system.saga.SagaStep;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Optional;
+import java.util.UUID;
+
+import static com.food.ordering.system.domain.DomainConstants.UTC;
 
 @Slf4j
 @Component
@@ -148,12 +146,11 @@ public class OrderPaymentSaga implements SagaStep<PaymentResponse> {
     }
 
     private SagaStatus[] getCurrentSagaStatus(PaymentStatus paymentStatus) {
-        switch (paymentStatus) {
-            case COMPLETED: return new SagaStatus[] { SagaStatus.STARTED };
-            case CANCELLED: return new SagaStatus[] { SagaStatus.PROCESSING };
-            case FAILED: return new SagaStatus[] { SagaStatus.STARTED, SagaStatus.PROCESSING };
-            default: return new SagaStatus[] { SagaStatus.FAILED };
-        }
+        return switch (paymentStatus) {
+            case COMPLETED -> new SagaStatus[] { SagaStatus.STARTED };
+            case CANCELLED -> new SagaStatus[] { SagaStatus.PROCESSING };
+            case FAILED -> new SagaStatus[] { SagaStatus.STARTED, SagaStatus.PROCESSING };
+        };
     }
 
     private Order rollbackPaymentForOrder(PaymentResponse paymentResponse) {
